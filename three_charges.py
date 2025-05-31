@@ -136,4 +136,3 @@ class ElectricFieldExampleScene(Scene):
                     self.play(
                         stream_lines.end_animation()
                     )
-                    

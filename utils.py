@@ -174,7 +174,7 @@ def plot_field_vector_of_E(phi, scale=1., nrow=5, field_points=100):
     
 # ----------------------------------------------------------------------------
 
-def plot_field_vector_of_E_animated_with_rays(phi, scale=1., nrow=5, number_of_rays=100, field_points=100):
+def plot_field_vector_of_E_animated_with_rays(phi, scale=1., nrow=5, number_of_rays=100, field_points=100, number_of_particles=100):
     """Plots the field vector of the electric field E from the potential phi.
        The field vector is scaled by the given scale factor. Rays move along the vector field, with their speed based on the field's magnitude.
        The vectors are log-normalized in length but their original magnitude is shown in color (from blue to red).
