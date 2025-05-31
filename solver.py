@@ -4,7 +4,33 @@ from scipy.sparse.linalg import spsolve
 from scipy.sparse import diags
 
 
-def solve_poisson(U, Rho=None, Eps=None):
+def solve_laplace(U, Rho=None, Eps=None):
+    """
+    Solves the Laplace equation for a given potential distribution `U` 
+    with optional charge density `Rho` and permittivity distribution `Eps`.
+    Parameters:
+    -----------
+    U : numpy.ndarray
+        A 2D array representing the initial potential distribution.
+    Rho : numpy.ndarray, optional
+        A 2D array representing the charge density distribution. 
+        Defaults to a zero array of the same shape as `U`.
+    Eps : numpy.ndarray, optional
+        A 2D array representing the permittivity distribution. 
+        Defaults to an array of ones with the same shape as `U`.
+    Returns:
+    --------
+    numpy.ndarray
+        A 2D array representing the solved potential distribution `phi`.
+    Notes:
+    ------
+    - The function assumes Dirichlet boundary conditions, where the boundary 
+      values of `U` are fixed.
+    - The solution is computed using a sparse matrix representation of the 
+      Laplace operator and solved using a sparse linear solver.
+    - Boundary conditions are determined by non-zero values in `U` and the 
+      edges of the domain.
+    """
 
     Nr, Nc = U.shape
 

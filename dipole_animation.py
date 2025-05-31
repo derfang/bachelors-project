@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import drawing_ops as ops
-from solver import solve_poisson
+from solver import solve_laplace
 from utils import *
 from manim import *
 
@@ -12,7 +12,7 @@ charges = ops.composition(
 )
 Rho = charges(np.zeros((N, N)))
 
-phi = solve_poisson(U=np.zeros((N, N)), Rho=Rho)
+phi = solve_laplace(U=np.zeros((N, N)), Rho=Rho)
 
 def make_function_from_potential(potential, scale_arrows=1.2):
     """
@@ -146,5 +146,8 @@ class Dipole_animation(Scene):
         self.play(stream_lines.end_animation())
         self.wait(2)    
         
-
+#todo: resolve dependency of stream lines on grid size
+#todo: resolve the need to shift the field to center
+#todo: resolve N not being square
+#todo: resolve the window size of 16:9
      

@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
-from solver import solve_poisson
+from solver import solve_laplace
 from matplotlib.colors import Normalize
 from matplotlib.animation import FuncAnimation
 from manim import *
@@ -88,7 +88,7 @@ def make_frames(values,
             out_dict['U'].append(Uc)
 
         if 'phi' in out:
-            phi = solve_poisson(Uc, RhoC, EpsC)
+            phi = solve_laplace(Uc, RhoC, EpsC)
             out_dict['phi'].append(phi)
 
         if 'E' in out:
