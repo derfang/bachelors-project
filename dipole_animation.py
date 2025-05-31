@@ -27,7 +27,7 @@ def make_function_from_potential(potential, scale_arrows=1.2):
     Ey, Ex = electric_field_from_potential(potential)
     E = amplitude(Ex, Ey)
     # shift the field to center
-    N = len(potential) #todo the grid may not be square
+    N = len(potential) 
     Ex_centered = np.roll(Ex, N//2, axis=0)
     Ey_centered = np.roll(Ey, N//2, axis=0)
     E = np.roll(E, N//2, axis=0)
@@ -71,9 +71,9 @@ def make_arrow_vector_field_E_from_potential(potential, scale_arrows=1.2):
     Ey_norm = scale_arrows * Ey / (E + 1e-8)
     # shift the field to center
     N = len(potential)
-    Ex_centered = np.roll(Ex, N//2, axis=0)
-    Ey_centered = np.roll(Ey, N//2, axis=0)
-    # E_centered = np.roll(E, N//2, axis=0)
+    Ex_centered = np.roll(Ex, (N//2, N//2), axis=(0, 1))
+    Ey_centered = np.roll(Ey, (N//2, N//2), axis=(0, 1))
+    # E_centered = amplitude(Ex_centered, Ey_centered)
 
     # Define a scaling factor to map positions to array indices
     scale_factor = N / config.frame_width
@@ -105,9 +105,9 @@ def make_stream_lines_from_potential(potential, scale_speed=1.2, stroke_width=0.
     E = amplitude(Ex, Ey)
     # shift the field to center
     N = len(potential)
-    Ex_centered = np.roll(Ex, N//2, axis=0)
-    Ey_centered = np.roll(Ey, N//2, axis=0)
-    E_centered = np.roll(E, N//2, axis=0)
+    Ex_centered = np.roll(Ex, (N//2, N//2), axis=(0, 1))
+    Ey_centered = np.roll(Ey, (N//2, N//2), axis=(0, 1))
+    E_centered = amplitude(Ex_centered, Ey_centered)
     # Normalize the field for visualization
     Ex_norm = scale_speed * Ex_centered / (E_centered + 1e-8)
     Ey_norm = scale_speed * Ey_centered / (E_centered + 1e-8)
@@ -132,8 +132,8 @@ class Dipole_animation(Scene):
         stream_lines = make_stream_lines_from_potential(phi,)
 
         # Create the charges
-        positive_charge = Circle(radius=0.4, color=RED, fill_opacity=1).move_to([-config.frame_width * 3 / 10, 0, 0])
-        negative_charge = Circle(radius=0.4, color=BLUE, fill_opacity=1).move_to([config.frame_width * 3 / 10, 0, 0])
+        positive_charge = Circle(radius=0.4, color=RED, fill_opacity=1).move_to([-config.frame_width * 2.5 / 10, 0, 0])
+        negative_charge = Circle(radius=0.4, color=BLUE, fill_opacity=1).move_to([config.frame_width * 2.5 / 10, 0, 0])
 
         # Animate the vector field, streamlines, and charges
         self.add(vector_field)
@@ -146,8 +146,5 @@ class Dipole_animation(Scene):
         self.play(stream_lines.end_animation())
         self.wait(2)    
         
-#todo: resolve dependency of stream lines on grid size
-#todo: resolve the need to shift the field to center
-#todo: resolve N not being square
-#todo: resolve the window size of 16:9
+
      
