@@ -435,3 +435,114 @@ def plot_E_from_ExEy(Ex, Ey, scale=1. , field_points=100):
     cbar.set_label('Field Magnitude', fontsize=14)
     
     plt.show()
+    
+#---------------------------------------------------------------------------------------    
+def make_function_from_potential(potential, scale_arrows=1.2):
+    """
+    Create a function that returns the electric field vector at a given position
+    based on the potential.
+    Args:
+        potential (np.ndarray): The potential array.
+    Returns:
+        func (callable): A function that takes a position (x, y) and returns the electric field vector (Ex, Ey).
+        funcnorm (callable): A function that takes a position (x, y) and returns the normalized electric field vector (Ex_norm, Ey_norm).
+    """
+    Ey, Ex = electric_field_from_potential(potential)
+    E = amplitude(Ex, Ey)
+    # shift the field to center
+    N = len(potential) 
+    Ex_centered = np.roll(Ex, N//2, axis=0)
+    Ey_centered = np.roll(Ey, N//2, axis=0)
+    E = np.roll(E, N//2, axis=0)
+    # Normalize the field for visualization
+    Ex_norm = scale_arrows * Ex_centered / (E + 1e-8)
+    Ey_norm = scale_arrows * Ey_centered / (E + 1e-8)
+    
+    def func(pos):
+        # Define a scaling factor to map positions to array indices
+        scale_factor = N / config.frame_width
+        return np.array([
+            Ex_norm[int(pos[1] * scale_factor), int(pos[0] * scale_factor)],
+            Ey_norm[int(pos[1] * scale_factor), int(pos[0] * scale_factor)],
+            0
+        ])
+    def funcnorm(pos):
+        # Define a scaling factor to map positions to array indices
+        scale_factor = N / config.frame_width
+        return np.array([
+            Ex_centered[int(pos[1] * scale_factor), int(pos[0] * scale_factor)],
+            Ey_centered[int(pos[1] * scale_factor), int(pos[0] * scale_factor)],
+            0
+        ])
+    # Return the function that computes the electric field vector    
+    return func, funcnorm
+
+# Create a function maakes a ArrowVectorField from the potential
+def make_arrow_vector_field_E_from_potential(potential, scale_arrows=1.2):
+    """
+    Create a function that returns a Manim ArrowVectorField
+    based on the potential.
+    Args:
+        potential (np.ndarray): The potential array.
+    Returns:
+        func (callable): Manim ArrowVectorField
+    """
+    Ey, Ex = electric_field_from_potential(potential)
+    E = amplitude(Ex, Ey)
+    # Normalize the field for visualization
+    Ex_norm = scale_arrows * Ex / (E + 1e-8)
+    Ey_norm = scale_arrows * Ey / (E + 1e-8)
+    # shift the field to center
+    N = len(potential)
+    Ex_centered = np.roll(Ex, (N//2, N//2), axis=(0, 1))
+    Ey_centered = np.roll(Ey, (N//2, N//2), axis=(0, 1))
+    # E_centered = amplitude(Ex_centered, Ey_centered)
+
+    # Define a scaling factor to map positions to array indices
+    scale_factor = N / config.frame_width
+    funcnorm = lambda pos: np.array([
+            Ex_centered[int(pos[1] * scale_factor), int(pos[0] * scale_factor)],
+            Ey_centered[int(pos[1] * scale_factor), int(pos[0] * scale_factor)],
+            0
+        ])
+    
+    # Create a vector field
+    vector_field = ArrowVectorField(
+        funcnorm,
+        x_range=[-config.frame_width / 2, config.frame_width / 2, 0.8],
+        y_range=[-config.frame_height / 2, config.frame_height / 2, 0.8]
+    )
+    
+    return vector_field
+
+# Create a function that returns the streamlines based on the potential
+def make_stream_lines_from_potential(potential, scale_speed=1.2, stroke_width=0.7, max_anchors_per_line=100, virtual_time=0.5, color=BLUE,):
+    """
+    Create a function that returns the streamlines based on the potential.
+    Args:
+        potential (np.ndarray): The potential array.
+    Returns:
+        func (callable): A function that takes a position (x, y) and returns the electric field vector (Ex, Ey).
+    """
+    Ey, Ex = electric_field_from_potential(potential)
+    E = amplitude(Ex, Ey)
+    # shift the field to center
+    N = len(potential)
+    Ex_centered = np.roll(Ex, (N//2, N//2), axis=(0, 1))
+    Ey_centered = np.roll(Ey, (N//2, N//2), axis=(0, 1))
+    E_centered = amplitude(Ex_centered, Ey_centered)
+    # Normalize the field for visualization
+    Ex_norm = scale_speed * Ex_centered / (E_centered + 1e-8)
+    Ey_norm = scale_speed * Ey_centered / (E_centered + 1e-8)
+    
+    # Define a scaling factor to map positions to array indices
+    scale_factor = N / config.frame_width
+    func = lambda pos: np.array([
+            Ex_norm[int(pos[1] * scale_factor), int(pos[0] * scale_factor)],
+            Ey_norm[int(pos[1] * scale_factor), int(pos[0] * scale_factor)],
+            0
+        ])
+    
+    # Create streamlines
+    stream_lines = StreamLines(func, stroke_width=stroke_width, max_anchors_per_line=max_anchors_per_line, virtual_time=virtual_time, color=color,)
+    return stream_lines
