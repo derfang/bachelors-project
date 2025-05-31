@@ -132,8 +132,8 @@ class Dipole_animation(Scene):
         stream_lines = make_stream_lines_from_potential(phi,)
 
         # Create the charges
-        positive_charge = Circle(radius=0.4, color=RED, fill_opacity=1).move_to([-config.frame_width * 2.5 / 10, 0, 0])
-        negative_charge = Circle(radius=0.4, color=BLUE, fill_opacity=1).move_to([config.frame_width * 2.5 / 10, 0, 0])
+        positive_charge = Circle(radius=0.4, color=RED, fill_opacity=1).move_to([-config.frame_width * 2.1 / 10, 0, 0])
+        negative_charge = Circle(radius=0.4, color=BLUE, fill_opacity=1).move_to([config.frame_width * 2.1 / 10, 0, 0])
 
         # Animate the vector field, streamlines, and charges
         self.add(vector_field)
