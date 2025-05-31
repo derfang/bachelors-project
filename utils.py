@@ -500,3 +500,44 @@ class ElectricField(ArrowVectorField):
             field_vect += mag / dist**2 * normalize(r)
         return field_vect
     
+    
+def plot_E_from_ExEy(Ex, Ey, scale=1. , field_points=100):
+    """Plots the electric field vector from the Ex and Ey components."""
+    
+    # Downsample the field to contain only a specific number of points
+    x_indices = np.linspace(0, Ex.shape[1] - 1, int(np.sqrt(field_points))).astype(int)
+    y_indices = np.linspace(0, Ex.shape[0] - 1, int(np.sqrt(field_points))).astype(int)
+    Ex_downsampled = Ex[np.ix_(y_indices, x_indices)]
+    Ey_downsampled = Ey[np.ix_(y_indices, x_indices)]
+    X, Y = np.meshgrid(x_indices, y_indices)
+    
+    # Compute the magnitude of the field vectors
+    E_magnitude = np.sqrt(Ex_downsampled**2 + Ey_downsampled**2)
+    
+    # normalize the magnitude of vectors so thier length is normalized
+    Ex_normalized = 10 * Ex_downsampled / E_magnitude
+    Ey_normalized = 10 * Ey_downsampled / E_magnitude
+    
+    
+    # Set up the figure and axis
+    
+    
+    fig, ax = plt.subplots()
+    ax.set_xlim(0, Ex.shape[1])
+    ax.set_ylim(0, Ex.shape[0])
+    ax.set_aspect('equal', adjustable='box')
+    ax.grid(False)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_title('Electric Field Vector', fontdict={'fontsize': 22})
+    ax.set_xlabel('x', fontdict={'fontsize': 18})
+    ax.set_ylabel('y', fontdict={'fontsize': 18})
+    ax.set_facecolor('black')
+    fig.patch.set_facecolor('black')
+    
+    # Plot the field vectors with color representing magnitude
+    quiver = ax.quiver(X, Y, Ex_normalized, Ey_normalized, E_magnitude, angles='xy', scale_units='xy', scale=1, cmap='afmhot', norm=Normalize())
+    cbar = fig.colorbar(quiver, ax=ax, orientation='vertical')
+    cbar.set_label('Field Magnitude', fontsize=14)
+    
+    plt.show()
